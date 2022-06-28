@@ -138,7 +138,7 @@ class Stereo_PnPVO:
             zc.append(position[2])
 
         # Reduce number of 3D points to plot
-        slicing_percentage = 1 #percentage
+        slicing_percentage = 1 # percentage
         slice_points = True
 
         xp, yp, zp = [], [], []
