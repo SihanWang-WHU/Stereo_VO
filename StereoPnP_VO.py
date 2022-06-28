@@ -2,11 +2,11 @@ import cv2
 import numpy as np
 from glob import glob
 import sys
+import json
 import time
 import os
 import yaml
 from matplotlib import pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 from frame import Frame
 from track import Track
@@ -141,9 +141,9 @@ class Stereo_PnPVO:
         slicing_percentage = 1 #percentage
         slice_points = True
 
-        xp,yp,zp = [],[],[]
+        xp, yp, zp = [], [], []
         if plot_points:
-            for kfID in range(1,self.keyframe_ID+1):
+            for kfID in range(1, self.keyframe_ID+1):
                 points = self.measurements[kfID]["points3d"]
 
                 if slice_points:
@@ -164,19 +164,33 @@ class Stereo_PnPVO:
             fig = plt.figure()
             ax = plt.axes(projection='3d')
             ax.plot3D(xc, zc, yc, 'green')
-            #s1 = [2*2**n for n in range(len(xc))]
+            # s1 = [2*2**n for n in range(len(xc))]
             ax.scatter(xc, zc, yc, c='red')
             if plot_points:
                 s2 = [2*1**n for n in range(len(xp))]
+                # right, front, downwards
                 ax.scatter(xp, zp, yp, c='gray',s=s2)
         else:
             s1 = [2*2**n for n in range(len(xc))]
-            plt.plot(xc,zc,'green')
-            plt.scatter(xc,zc,c='red')
+            plt.plot(xc, zc, 'green')
+            plt.scatter(xc, zc, c='red')
             if plot_points:
                 s2 = [2*1**n for n in range(len(xp))]
-                plt.scatter(xp,zp,c='gray',s=s2)
+                plt.scatter(xp, zp, c='gray', s=s2)
         plt.show()
+
+    def write2file(self, sframe, end_frame, path, dataset):
+        print("Writing data to ~/{}".format(path))
+
+        for f in range(sframe, end_frame):
+            pose_file = open(path+"poses_"+dataset+".txt","a+")
+            pose_json = json.dumps(self.poses[f])
+            pose_file.write(pose_json + "\n")
+
+            point_file = open(path+"point_data_"+dataset+".txt","a+")
+            point_json = json.dumps(self.point_data[f])
+            point_file.write(point_json + "\n")
+        print("Files wrtten\n")
 
 
 def read_yaml(yaml_fp):
@@ -193,7 +207,7 @@ if __name__ == '__main__':
     # Dataset
     dataset = "kitti"
     yaml_fp = 'kitti.yaml'
-    detecting_method = 'SIFT'
+    detecting_method = 'ORB'
     matching_alg = 'flann'
     imgL_files = sorted(glob("data/" + dataset.lower() + "/image_0/*.png"))
     imgR_files = sorted(glob("data/" + dataset.lower() + "/image_1/*.png"))
@@ -208,7 +222,7 @@ if __name__ == '__main__':
     show_trajectory = True
     show_3Dpts = False
     plot3D = False
-    write2file = False
+    write2file = True
 
     prev_imgL, prev_imgR = None, None
     total_duration = 0
@@ -259,3 +273,12 @@ if __name__ == '__main__':
     if show_trajectory:
         print("Plotting trajectory...\n")
         svo.plot_trajectory(start_frame, end_frame, plot3D, show_3Dpts)
+
+    # Write pose and points to file
+    if write2file:
+        path = "outputs/"
+        if os.path.exists(path+"poses_"+dataset+".txt"):
+            os.remove(path+"poses_"+dataset+".txt")
+        if os.path.exists(path+"point_data_"+dataset+".txt"):
+            os.remove(path+"point_data_"+dataset+".txt")
+        svo.write2file(start_frame, end_frame, path, dataset)

@@ -43,28 +43,6 @@ cv2.destroyAllWindows()
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints,
                                                    imgpoints, gray.shape[::-1], None, None)
 
-# print("ret:", ret)
-# print("mtx:\n", mtx)      # 内参数矩阵
-# print("dist:\n", dist)   # 畸变系数   distortion cofficients = (k_1,k_2,p_1,p_2,k_3)
-# print("rvecs:\n", rvecs)   # 旋转向量  # 外参数
-# print("tvecs:\n", tvecs)  # 平移向量  # 外参数
-
-testimg = cv2.imread('testimg.jpg')
-h, w = testimg.shape[:2]
-'''
-优化相机内参（camera matrix），这一步可选。
-参数1表示保留所有像素点，同时可能引入黑色像素，
-设为0表示尽可能裁剪不想要的像素，这是个scale，0-1都可以取。
-'''
-newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (w, h), 1, (w, h))
-# print("newcameramtx:\n", newcameramtx)
-# 纠正畸变
-dst = cv2.undistort(testimg, mtx, dist, None, newcameramtx)
-#输出纠正畸变以后的图片
-x, y, w, h = roi
-dst = dst[y:y+h, x:x+w]
-cv2.imwrite('undistorted_testimg.png', dst)
-
 #计算误差
 tot_error = 0
 for i in range(len(objpoints)):
@@ -75,13 +53,19 @@ for i in range(len(objpoints)):
 print("total error: ", tot_error/len(objpoints))
 
 #write yaml
-def write_yaml(mtx, dist, newcameramtx):
+def write_yaml(mtx, dist):
     mtx = mtx.tolist()
     dist = dist.tolist()
-    newcameramtx = newcameramtx.tolist()
-    data = {"camera_matrix": mtx, "dist_coeff": dist, "new_camera_matrix": newcameramtx}
+    data = {"camera_matrix": mtx, "dist_coeff": dist}
     with open("parameter.yaml", "w") as file:
         yaml.dump(data, file)
 
 if __name__ == '__main__':
-    write_yaml(mtx, dist, newcameramtx)
+    write_yaml(mtx, dist)
+    print("fx =", format(mtx[0][0]))
+    print("fy =", format(mtx[1][1]))
+    print("cx =", format(mtx[0][2]))
+    print("cy =", format(mtx[1][2]))
+    print("distortion coefficients")
+    print("k_1 = {0}, k_2 = {1}, p_1 = {2}, p_2 = {3}, "
+          "k_3 = {4}".format(dist[0][0], dist[0][1], dist[0][2], dist[0][3], dist[0][4]))
