@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1061</width>
-    <height>762</height>
+    <height>776</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -388,20 +388,10 @@
      <string>FilePath:</string>
     </property>
    </widget>
-   <widget class="QTextEdit" name="height_double">
-    <property name="geometry">
-     <rect>
-      <x>398</x>
-      <y>180</y>
-      <width>170</width>
-      <height>44</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="width_show">
     <property name="geometry">
      <rect>
-      <x>79</x>
+      <x>76</x>
       <y>180</y>
       <width>57</width>
       <height>44</height>
@@ -423,7 +413,7 @@
    <widget class="QLabel" name="height_show">
     <property name="geometry">
      <rect>
-      <x>326</x>
+      <x>330</x>
       <y>180</y>
       <width>65</width>
       <height>44</height>
@@ -440,16 +430,6 @@
     </property>
     <property name="text">
      <string>Height:</string>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="width_double">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>180</y>
-      <width>169</width>
-      <height>44</height>
-     </rect>
     </property>
    </widget>
    <widget class="QPushButton" name="Start_Calib_button">
@@ -495,6 +475,117 @@
     <property name="text">
      <string>Write Result to File</string>
     </property>
+   </widget>
+   <widget class="QSpinBox" name="widthnum_int">
+    <property name="geometry">
+     <rect>
+      <x>163</x>
+      <y>180</y>
+      <width>151</width>
+      <height>44</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Times New Roman</family>
+      <pointsize>12</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="heightnum_int">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>180</y>
+      <width>151</width>
+      <height>44</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Times New Roman</family>
+      <pointsize>12</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+   </widget>
+   <widget class="QGraphicsView" name="Calibimgs">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>270</y>
+      <width>480</width>
+      <height>360</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="image_text">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>220</y>
+      <width>71</width>
+      <height>44</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Times New Roman</family>
+      <pointsize>12</pointsize>
+      <weight>75</weight>
+      <italic>true</italic>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Images</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>660</y>
+      <width>501</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="Notes">
+       <property name="font">
+        <font>
+         <family>Times New Roman</family>
+         <pointsize>12</pointsize>
+         <weight>75</weight>
+         <italic>true</italic>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Notes: Please notice that the FilePath only contains ASCII </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="font">
+        <font>
+         <family>Times New Roman</family>
+         <pointsize>12</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>code and the images in the folder must be .jpg</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

@@ -26,16 +26,18 @@ def Calibration(fp, width_num, height_num):
         ret, corners = cv2.findChessboardCorners(gray, (width_num, height_num), None)
         # 如果找到足够点对，将其存储起来
         if ret:
+            filename = "Calibrate_Res/" + format(i) + ".jpg"
             i = i + 1
             cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
             objpoints.append(objp)
             imgpoints.append(corners)
             # 将角点在图像上显示
             cv2.drawChessboardCorners(gray, (width_num, height_num), corners, ret)
-            cv2.namedWindow('findCorners', cv2.WINDOW_NORMAL)
-            cv2.resizeWindow('findCorners', 810, 540)
-            cv2.imshow('findCorners', gray)
-            cv2.waitKey(100)
+            # cv2.namedWindow('findCorners', cv2.WINDOW_NORMAL)
+            # cv2.resizeWindow('findCorners', 810, 540)
+            # cv2.imshow('findCorners', gray)
+            cv2.imwrite(filename, gray)
+            # cv2.waitKey(1)
     cv2.destroyAllWindows()
 
     # %% 标定
@@ -49,14 +51,14 @@ def Calibration(fp, width_num, height_num):
         error = cv2.norm(imgpoints[i], imgpoints2, cv2.NORM_L2) / len(imgpoints2)
         tot_error += error
 
-    return mtx, dist, tot_error
+    return mtx, dist, tot_error, lenth
 
 #write yaml
 def write_yaml(mtx, dist):
     mtx = mtx.tolist()
     dist = dist.tolist()
     data = {"camera_matrix": mtx, "dist_coeff": dist}
-    with open("parameter.yaml", "w") as file:
+    with open("Calibrate_Res/ parameter.yaml", "w") as file:
         yaml.dump(data, file)
 
 if __name__ == '__main__':

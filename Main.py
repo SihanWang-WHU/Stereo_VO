@@ -6,10 +6,14 @@ import json
 import time
 import os
 import yaml
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QPainter, QImage, QPixmap
 from matplotlib import pyplot as plt
 from PyQt5.QtWidgets import *
 from PyQt5 import QtWidgets
+import matplotlib
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5.QtWidgets import *
 
 import StereoPnP_VO
 import frame
@@ -21,9 +25,12 @@ import frame
 import track
 from StereoPnP_VO import Stereo_PnPVO
 import Calibrate
+matplotlib.use('Qt5Agg')
+# 使用 matplotlib中的FigureCanvas (在使用 Qt5 Backends中 FigureCanvas继承自QtWidgets.QWidget)
 
 class Window_Param:
     calibpath = []
+    cali_lenth = 0
     width_num = 9
     height_num = 5
     mtx = np.zeros([3, 3])
@@ -38,8 +45,21 @@ class Window_Param:
         ui.califp_char.setText(self.calibpath)
 
     def button_Calibrate(self):
-        self.mtx, self.dist, self.tot_error = \
-            Calibrate.Calibration(self.calibpath, 9, 5)
+        self.scene = QGraphicsScene()
+        ui.Calibimgs.setScene(self.scene)
+        ui.Calibimgs.show()
+        self.mtx, self.dist, self.tot_error, self.cali_lenth = \
+            Calibrate.Calibration(self.calibpath, self.width_num, self.height_num)
+        for i in range(1, self.cali_lenth + 1):
+            qfile = "Calibrate_Res/" + format(i) + ".jpg"
+            img = cv2.imread(qfile)
+            img = cv2.resize(img, [440, 330])
+            cv2.waitKey(100)
+            y, x = img.shape[:-1]
+            frame = QImage(img, x, y, QImage.Format_Grayscale16)
+            self.scene.clear()
+            self.pix = QPixmap.fromImage(frame)
+            self.scene.addPixmap(self.pix)
         ui.fx_double.setText(format(self.mtx[0][0]))
         ui.fy_double.setText(format(self.mtx[1][1]))
         ui.cx_double.setText(format(self.mtx[0][2]))
@@ -51,11 +71,16 @@ class Window_Param:
         ui.k4_double.setText(format(self.dist[0][4]))
         ui.error_double.setText(format(self.tot_error))
 
+
+
     def click_califp_button(self):
         if ui.califp_button.isEnabled():
             self.get_calibration_fp()
 
     def click_start_Calib_button(self):
+        # get the width num and height num (int32) of the grid from the spinbox input
+        self.width_num = ui.widthnum_int.value()
+        self.height_num = ui.heightnum_int.value()
         if ui.Start_Calib_button.isEnabled():
             self.button_Calibrate()
 
