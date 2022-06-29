@@ -7,9 +7,14 @@ import time
 import os
 import yaml
 from matplotlib import pyplot as plt
-
+from PyQt5.QtWidgets import *
+from PyQt5 import QtWidgets
+from MainWindow import Ui_MainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow
+import MainWindow
 from frame import Frame
 from track import Track
+import Calibrate
 
 
 class Stereo_PnPVO:
@@ -68,7 +73,7 @@ class Stereo_PnPVO:
                                                len(self.measurements[self.keyframe_ID]["points2dL"])))
 
         # Camera pose estimation
-        self.pnp_solver(tracker.tracked_pts, tracker.corres_3Dpts)
+        self.pnp_solver(tracker.tracked_pts, tracker.corres_3Dpts, frame)
 
         # Required for data association
         self.prev_trackedPts2D = tracker.tracked_pts
@@ -90,7 +95,7 @@ class Stereo_PnPVO:
             frame.transform_3Dpoints(self.poses[frame.frame_ID])
             self.update_measurements(frame)
 
-    def pnp_solver(self, points2d, points3d):
+    def pnp_solver(self, points2d, points3d, frame):
         points2d = np.array(points2d)
         points3d = np.array(points3d)
         intrinsic_matrix = self.cam_params["camera_matrix"]
@@ -203,7 +208,25 @@ def read_yaml(yaml_fp):
         dist = dist.reshape([4, 1])
     return mtx, dist
 
+
 if __name__ == '__main__':
+    ############################### Calibrate ################################
+    # 棋盘格模板规格
+    calib_fp = "Calibration"
+    width_num = 9
+    height_num = 5
+    mtx, dist, tot_error = Calibrate.Calibration(calib_fp, width_num, height_num)
+    Calibrate.write_yaml(mtx, dist)
+    print("fx =", format(mtx[0][0]))
+    print("fy =", format(mtx[1][1]))
+    print("cx =", format(mtx[0][2]))
+    print("cy =", format(mtx[1][2]))
+    print("distortion coefficients")
+    print("k_1 = {0}, k_2 = {1}, p_1 = {2}, p_2 = {3}, "
+          "k_3 = {4}".format(dist[0][0], dist[0][1], dist[0][2], dist[0][3], dist[0][4]))
+
+
+    ############################### VO ################################
     # Dataset
     dataset = "kitti"
     yaml_fp = 'kitti.yaml'
