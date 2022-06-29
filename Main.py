@@ -82,21 +82,6 @@ if __name__ == '__main__':
     # 进入程序的主循环，并通过exit函数确保主循环安全结束(该释放资源的一定要释放)
     sys.exit(app.exec_())
 
-    ############################### Calibrate ################################
-    # 棋盘格模板规格
-    calib_fp = "Calibration"
-    width_num = 9
-    height_num = 5
-    mtx, dist, tot_error = Calibrate.Calibration(calib_fp, width_num, height_num)
-    Calibrate.write_yaml(mtx, dist)
-    print("fx =", format(mtx[0][0]))
-    print("fy =", format(mtx[1][1]))
-    print("cx =", format(mtx[0][2]))
-    print("cy =", format(mtx[1][2]))
-    print("distortion coefficients")
-    print("k_1 = {0}, k_2 = {1}, p_1 = {2}, p_2 = {3}, "
-          "k_3 = {4}".format(dist[0][0], dist[0][1], dist[0][2], dist[0][3], dist[0][4]))
-
     ############################### VO ################################
     # Dataset
     dataset = "kitti"
