@@ -116,8 +116,7 @@ class Frame:
         self.Fundamentalmtx, maskF = cv2.findFundamentalMat(pts1, pts2, cv2.FM_LMEDS)
         self.Eseentialmtx, maskE = cv2.findEssentialMat(pts1, pts2, self.mtx, method=cv2.RANSAC)
         retval2, self.CamR, self.CamT, mask = cv2.recoverPose(self.Eseentialmtx, pts1, pts2, self.mtx)
-        self.baseline = math.sqrt(self.CamT[0][0] * self.CamT[0][0] +
-                                  self.CamT[1][0] * self.CamT[1][0] + self.CamT[2][0] * self.CamT[2][0])
+        self.baseline = 0.5371657
 
     def traingulate_points(self):
         self.convertMatchP2xy()

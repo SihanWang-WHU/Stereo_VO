@@ -225,7 +225,7 @@ if __name__ == '__main__':
     dataset = "kitti"
     yaml_fp = 'kitti.yaml'
     detecting_method = 'ORB'
-    matching_alg = 'flann'
+    matching_alg = 'BF'
     imgL_files = sorted(glob("data/" + dataset.lower() + "/image_0/*.png"))
     imgR_files = sorted(glob("data/" + dataset.lower() + "/image_1/*.png"))
 
