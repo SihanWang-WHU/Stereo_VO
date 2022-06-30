@@ -40,21 +40,21 @@ class Track:
                 self.corres_3Dpts.append(pts3D[id_list[i]])
                 self.point_IDs.append(id_list[i])
 
-        show_tracked_pts = True
-        if show_tracked_pts:
-            self.show_trackedPoints()
+        # show_tracked_pts = True
+        # if show_tracked_pts:
+        #     self.show_trackedPoints()
 
     def compute_opticalFlow(self):
         points2track = np.float32(np.array(self.points2track).reshape(-1, 1, 2))
         return cv2.calcOpticalFlowPyrLK(self.prev_imgL, self.frame.imgL, \
                                         points2track, None, **self.lk_params)
 
-    def show_trackedPoints(self):
-        img = self.frame.imgL.copy()
-        for pt in self.tracked_pts:
-            pt = np.array(pt)
-            pt = pt.reshape(2, )
-            coord = (int(pt[0]), int(pt[1]))
-            img = cv2.circle(img, coord, radius=3, color=(2, 51, 196), thickness=2)
-        cv2.imshow('left_frame', img);
-        cv2.waitKey(10)
+    # def show_trackedPoints(self):
+    #     img = self.frame.imgL.copy()
+    #     for pt in self.tracked_pts:
+    #         pt = np.array(pt)
+    #         pt = pt.reshape(2, )
+    #         coord = (int(pt[0]), int(pt[1]))
+    #         img = cv2.circle(img, coord, radius=3, color=(2, 51, 196), thickness=2)
+    #     cv2.imshow('left_frame', img);
+    #     cv2.waitKey(10)

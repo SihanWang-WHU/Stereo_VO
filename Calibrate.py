@@ -32,11 +32,11 @@ def Calibration(fp, width_num, height_num):
             objpoints.append(objp)
             imgpoints.append(corners)
             # 将角点在图像上显示
-            cv2.drawChessboardCorners(gray, (width_num, height_num), corners, ret)
+            cv2.drawChessboardCorners(img, (width_num, height_num), corners, ret)
             # cv2.namedWindow('findCorners', cv2.WINDOW_NORMAL)
             # cv2.resizeWindow('findCorners', 810, 540)
             # cv2.imshow('findCorners', gray)
-            cv2.imwrite(filename, gray)
+            cv2.imwrite(filename, img)
             # cv2.waitKey(1)
     cv2.destroyAllWindows()
 

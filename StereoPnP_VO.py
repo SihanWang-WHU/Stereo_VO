@@ -7,11 +7,6 @@ import time
 import os
 import yaml
 from matplotlib import pyplot as plt
-from PyQt5.QtWidgets import *
-from PyQt5 import QtWidgets
-from MainWindow import Ui_MainWindow
-from PyQt5.QtWidgets import QApplication, QMainWindow
-import MainWindow
 from frame import Frame
 from track import Track
 import Calibrate
@@ -33,10 +28,10 @@ class Stereo_PnPVO:
         self.cam_params = {"camera_matrix": K_mat,
                            "dist_coeffs": dist_coeffs}
         # Percentage of keyframe points to decide new keyframe
-        self.min_pt4kf = 0.85
+        self.min_pt4kf = 0.7
 
     def initialize(self, frame):
-        is_keyframe = True
+        self.is_keyframe = True
         self.update_keyframeID()
 
         frame.get_measurements()
@@ -69,11 +64,11 @@ class Stereo_PnPVO:
         tracker.track_features(self.measurements[self.keyframe_ID]["points3d"],
                                self.prev_ptIDs)
 
-        print("tracked points {} of {}".format(len(tracker.tracked_pts),
-                                               len(self.measurements[self.keyframe_ID]["points2dL"])))
+        # print("tracked points {} of {}".format(len(tracker.tracked_pts),
+        #                                         len(self.measurements[self.keyframe_ID]["points2dL"])))
 
         # Camera pose estimation
-        self.pnp_solver(tracker.tracked_pts, tracker.corres_3Dpts, frame)
+        position = self.pnp_solver(tracker.tracked_pts, tracker.corres_3Dpts, frame)
 
         # Required for data association
         self.prev_trackedPts2D = tracker.tracked_pts
@@ -88,12 +83,14 @@ class Stereo_PnPVO:
         new_kfFactor = len(self.measurements[self.keyframe_ID]["points2dL"]) * self.min_pt4kf
 
         if len(tracker.tracked_pts) < new_kfFactor:
-            print("new keyframe at {}. kf_ID: {}".format(frame.frame_ID, self.keyframe_ID))
-            is_keyframe = True
+            # print("new keyframe at {}. kf_ID: {}".format(frame.frame_ID, self.keyframe_ID))
+            self.is_keyframe = True
             self.update_keyframeID()
             frame.get_measurements()
             frame.transform_3Dpoints(self.poses[frame.frame_ID])
             self.update_measurements(frame)
+        return position, tracker.tracked_pts, self.measurements[self.keyframe_ID]["points2dL"], \
+               self.measurements[self.keyframe_ID]["points2dR"]
 
     def pnp_solver(self, points2d, points3d, frame):
         points2d = np.array(points2d)
@@ -132,8 +129,9 @@ class Stereo_PnPVO:
         else:
             print("failed to estimate pose!")
             sys.exit()
+        return cur_position
 
-    def plot_trajectory(self, sframe,end_frame, plot3D=False, plot_points = False):
+    def plot_trajectory(self, sframe, end_frame, plot3D = False, plot_points = False):
         #camera Y-axis is vertical axis
         xc, yc, zc = [], [], []
         for idx in range(sframe, end_frame):
@@ -143,7 +141,7 @@ class Stereo_PnPVO:
             zc.append(position[2])
 
         # Reduce number of 3D points to plot
-        slicing_percentage = 1 # percentage
+        slicing_percentage = 0.5 # percentage
         slice_points = True
 
         xp, yp, zp = [], [], []
